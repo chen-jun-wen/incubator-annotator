@@ -148,29 +148,8 @@ function getRangeTextPosition(range: Range, scope: DomScope): number {
     },
   );
   const scopeOffset = isTextNode(scopeAsRange.startContainer) ? scopeAsRange.startOffset : 0;
-  if (isTextNode(range.startContainer))
-    return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
-  else
-    return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
-}
-
-function firstTextNodeInRange(range: Range): Text {
-  // Find the first text node inside the range.
-  const iter = document.createNodeIterator(
-    range.commonAncestorContainer,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode(node: Text) {
-        // Only reveal nodes within the range; and skip any empty text nodes.
-        return range.intersectsNode(node) && node.length > 0
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT
-      },
-    },
-  );
-  const node = iter.nextNode() as Text | null;
-  if (node === null) throw new Error('Range contains no text nodes');
-  return node;
+  const rangeOffset = isTextNode(range.startContainer) ? range.startOffset : 0;
+  return seek(iter, range.startContainer) + rangeOffset - scopeOffset;
 }
 
 function isTextNode(node: Node): node is Text {
